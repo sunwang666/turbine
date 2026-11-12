@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>APK 构建指南 - 汽轮机效率计算器</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#0f0f23;color:#e0e0e0;padding:20px;max-width:780px;margin:auto}
+h1{color:#a78bfa;font-size:22px;margin:20px 0;text-align:center}
+h2{color:#4ade80;font-size:17px;margin:18px 0 10px;padding-bottom:4px;border-bottom:1px solid #2a2a4a}
+.step{background:#1a1a2e;border:1px solid #2a2a4a;border-radius:12px;padding:14px 16px;margin:10px 0}
+.step h3{color:#fbbf24;font-size:15px;margin:0 0 6px}
+.step p{margin:4px 0;font-size:14px;line-height:1.6}
+.step .img-placeholder{background:#2a2a4a;border-radius:8px;padding:20px;text-align:center;margin:8px 0;color:#666;font-size:13px}
+code{background:#2a2a4a;padding:1px 5px;border-radius:3px;font-size:13px;color:#fbbf24}
+.highlight{color:#4ade80}
+.warn{background:#2d1b0e;border-color:#f59e0b}
+.warn h3{color:#f59e0b}
+.btn-show{display:inline-block;background:#1a1a2e;border:1px solid #4ade80;color:#4ade80;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:13px;margin:2px}
+</style></head>
+<body>
+<h1>📱 汽轮机效率计算器 - APK 构建指南</h1>
+
+<div class="step warn">
+<h3>⚠️ 为什么不能在这台电脑上直接生成 APK？</h3>
+<p>当前电脑受企业网络限制，无法下载 JDK（Java编译器）、Android SDK 等构建工具。<br>
+但可以用 <strong>GitHub Actions 云编译服务</strong> 免费自动生成 APK，<br>
+全过程只需要浏览器，无需安装任何软件。</p>
+</div>
+
+<h2>方案一：GitHub Actions 云编译（推荐）</h2>
+<p style="font-size:13px;color:#888;margin-bottom:8px">全程免费，仅需 GitHub 账号。文件已就绪，跟着做即可。</p>
+
+<div class="step">
+<h3>1️⃣ 注册/登录 GitHub</h3>
+<p>浏览器打开 <a href="https://github.com" target="_blank" style="color:#4ade80">https://github.com</a></p>
+<p>• 有账号 → 直接登录<br>
+• 没账号 → 点右上角 <code>Sign up</code>，输入邮箱和密码注册（免费）</p>
+</div>
+
+<div class="step">
+<h3>2️⃣ 创建新仓库</h3>
+<p>登录后，点击右上角 <code>+</code> 号 → <code>New repository</code></p>
+<div class="img-placeholder">┌──────────────────────────────────────┐<br>
+│  [头像 ▼]  [+] ← 点这里                │<br>
+│     ├ New repository                   │<br>
+│     ├ New gist                         │<br>
+│     └ New organization                 │<br>
+└──────────────────────────────────────┘</div>
+<p>• Repository name 填：<code>turbine-calculator</code>（可任意）<br>
+• <strong>不要勾选</strong> "Add a README file"<br>
+• 点击底部 <code>Create repository</code></p>
+</div>
+
+<div class="step">
+<h3>3️⃣ 上传项目文件</h3>
+<p>创建后会出现新页面，点击：<code>uploading an existing file</code></p>
+<div class="img-placeholder">┌──────────────────────────────────────────┐<br>
+│  ...or push an existing repository ...   │<br>
+│                                          │<br>
+│  📤 uploading an existing file  ← 点这里   │<br>
+└──────────────────────────────────────────┘</div>
+<p><strong>关键：</strong>打开文件夹 <code>D:\program files\HermesWorkSpace\android_app</code></p>
+<p>按 <code>Ctrl+A</code> 全选 <strong>所有文件/文件夹</strong>（包括 <code>.github</code> 文件夹），<br>
+拖拽到浏览器上传区域。</p>
+<p>在最下面 <code>Commit changes</code> → <code>Commit directly to the main branch</code> → 点击绿色按钮提交。</p>
+</div>
+
+<div class="step">
+<h3>4️⃣ 找到并触发构建</h3>
+<p>上传完成后，页面上方有一排标签页：</p>
+<div class="img-placeholder">
+┌──────────────────────────────────────────────────┐<br>
+│  &lt;&gt; Code  🛜 Issues  📋 Pull requests  ⚡ Actions  ← 点这里  │<br>
+└──────────────────────────────────────────────────┘</div>
+<p>点击 <strong><code>Actions</code></strong> 标签。</p>
+<p><strong>两种情况：</strong></p>
+<p>① 如果看到绿色按钮 <strong><code>I understand my workflows, go ahead and enable them</code></strong><br>
+　→ 点击这个按钮启用 workflows</p>
+<p>② 如果看到左侧列表有 <code>Build Android APK</code>：</p>
+<div class="img-placeholder">
+┌──────────────────────────────────────────┐<br>
+│  Actions                                 │<br>
+│  ┌─────────────────────────────────────┐ │<br>
+│  │ All workflows                       │ │<br>
+│  │ 📦 Build Android APK   ← 点击这项   │ │<br>
+│  └─────────────────────────────────────┘ │<br>
+│                                          │<br>
+│  ┌──────────────────────────────────┐    │<br>
+│  │ [Run workflow ▼]    ← 点这个按钮  │    │<br>
+│  └──────────────────────────────────┘    │<br>
+└──────────────────────────────────────────┘</div>
+<p>• 点击 <code>Build Android APK</code>（左侧列表）<br>
+• 再点击右侧 <strong><code>Run workflow</code></strong> 按钮<br>
+• 弹出窗口直接点下方的 <code>Run workflow</code><br>
+• 页面刷新，出现一个黄色的 ⚠️ 图标 → 说明构建已开始</p>
+</div>
+
+<div class="step">
+<h3>5️⃣ 等待构建完成（约 3~5 分钟）</h3>
+<p>构建中 → 黄色 ⚡ 图标<br>
+构建成功 → 绿色 ✅ 图标</p>
+<p>可以点击这个 workflow 查看实时日志。</p>
+</div>
+
+<div class="step">
+<h3>6️⃣ 下载 APK</h3>
+<p>构建成功后：</p>
+<div class="img-placeholder">
+┌──────────────────────────────────────────┐<br>
+│  ✅ Build Android APK #1                 │<br>
+│  ┌─────────────────────────────────────┐ │<br>
+│  │ Artifacts                           │ │<br>
+│  │ 📦 TurbineEfficiency-APK  ← 下载这个 │ │<br>
+│  └─────────────────────────────────────┘ │<br>
+└──────────────────────────────────────────┘</div>
+<p>• 点击 workflow 条目<br>
+• 在 <strong>Artifacts</strong> 部分下载 <code>TurbineEfficiency-APK.zip</code><br>
+• 解压得到 <code>app-debug.apk</code></p>
+</div>
+
+<div class="step">
+<h3>7️⃣ 手机安装 APK</h3>
+<p>• 将 APK 传到手机（微信/QQ/网盘/USB）<br>
+• 在手机文件管理器中点击 APK 安装<br>
+• 如提示"禁止安装未知来源应用"，去设置中允许即可</p>
+<p>安装后打开就是汽轮机效率计算器，完全离线可用 ✅</p>
+</div>
+
+<h2>方案二：PWABuilder 在线生成（备选）</h2>
+<div class="step">
+<h3>用手机浏览器直接操作</h3>
+<p>如果您暂时无法访问 GitHub：</p>
+<p>1️⃣ 在电脑上先启动临时服务器：</p>
+<p><code>cd D:\program files\HermesWorkSpace\mobile_app</code><br>
+<code>python server.py</code></p>
+<p>2️⃣ 记下电脑的 IP 地址（在 cmd 输入 <code>ipconfig</code> 查看）</p>
+<p>3️⃣ 手机和电脑连同一个 WiFi</p>
+<p>4️⃣ 手机浏览器打开 <code>http://电脑IP:8000</code></p>
+<p>5️⃣ Chrome 菜单 → <strong>添加到主屏幕</strong> → 安装</p>
+<p>安装后和原生 App 一样全屏运行，而且离线可用。</p>
+</div>
+
+<p style="text-align:center;margin:20px 0;color:#666;font-size:12px">
+构建过程中遇到问题？请把错误截图发给我继续帮你解决</p>
+</body></html>
